@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Query
+from fastapi import FastAPI,Query,Path
 from typing import Optional
 from pydantic import BaseModel
 
@@ -53,3 +53,69 @@ def reat_item_validation(item_id:int = path (...,title="the 10 of the item to ge
     results = {"item_id":item_id}
     if q:
         results.update({"q": q})
+
+
+'''Part 7 -  Multiple Parameters'''
+
+class Item(BaseModel):
+    name : str
+    description : str | None = None
+    price : float
+    tax : float | None = None
+
+class User(BaseModel):
+    username : str
+    full_bane : str | None = None
+
+'''
+@app.put("/item/{item_id}")
+def update_item(
+    item_id: int=path(...,title="The id of the item to get", get=0,le=150),
+    q:str | None =None,
+    item : Item | None = None
+    user:User,
+    importance : int
+):
+    results = {"item_id" : item_id}
+    if q:
+        results.update({"q":q})
+    if item:
+        results.update({"item":item})
+    if User:
+        results.update({"user": User})
+    if impotance:
+        results.update({"imortance" : importance})
+
+    return results
+    '''
+
+@app.put ("/items/{item_id}")
+def update_item(
+    item_id : int
+    item:Item = Body(
+        ...,
+        examples={
+            "summary": "A normalexample",
+            "description": "A __normal__ item works _correctly_",
+            "value":{"name": "Foo",
+                      "description": "A very nice Item"
+                      "price" : 16.25,
+                      "tax": 1.67,
+                      },
+        },
+        "converted": {
+            "summary": "An example with converted date",
+            "description": "FastAPI can convert price 'strings' to"
+            "value": {"name":"Bar","price":"16.25"},
+
+        },
+        "invalid": {
+            "summary": "Invalid date is rejected with an error",
+            "description": "Hello youtubers",
+            "value": {"name":"Baz", "price": "sixteen point two five"}
+        },
+    )
+
+): 
+    results= {"item_id":item_id, "item":item}
+    return results
