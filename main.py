@@ -1,6 +1,6 @@
-from fastapi import FastAPI,Query,Path
+from fastapi import FastAPI,Query,Path,Body,Cookie,Header
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, HttpUrl
 from uuid import UUID
 from datetime import datetime, time, timedelta
 
@@ -121,11 +121,11 @@ def update_item(
     return results
 
 part 11 - Extra Data Types
-'''
+
 @app.put ("/items/{item_id}")
 def read_items(
     item_id:UUID, 
-    start_date:datetimev| None=Body(None), 
+     start_date:datetime| None = Body(None), 
     end_date:datetime |None = Body(None),
     repeat_at: time|None = Body(None),
     process_after: timedelta | None = Body(None),
@@ -142,5 +142,23 @@ def read_items(
         "process_after": process_after,
         "start_process": start_process,
         "duration": duration,
+        }
 
+part 12 - Cookie and Header Parameters
+'''
+
+
+@app.get("/items")
+def read_items(
+    cookie_id: str |None=Cookie(None),
+    accept_encoding: str|None=Header(None, convert_underscores=False),
+    sec_ch_ua:str|None=Header(None),
+    user_agent: str|None=Header(None),
+
+):
+    return {
+        "cookie_id": cookie_id,
+        "Accept_Encoding": accept_encoding,
+        "sec-ch-ua":sec_ch_ua,
+        "User-Agent":user_agent
         }
