@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Query,Path,Body,Cookie,Header
-from typing import Optional
-from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, Literal
+from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
 
@@ -145,7 +145,7 @@ def read_items(
         }
 
 part 12 - Cookie and Header Parameters
-'''
+
 
 
 @app.get("/items")
@@ -162,3 +162,59 @@ def read_items(
         "sec-ch-ua":sec_ch_ua,
         "User-Agent":user_agent
         }
+
+
+part 13 - Response Model    
+'''
+class Item(BaseModel):
+    name:str
+    description:str | None=None
+    price:float
+    tax:float =10.5
+    tags: list[str]=[]
+items = {
+    "foo":{"name":"Foo","price":50.2},
+    "bar":{"name":"Bar ", "description":"The bartenders","price":62, "tax":20.2},
+    "baz":{"name":"Baz ", "description":None,"price":50.2, "tax":10.5,"tags":[]},
+}
+
+@app.get("/items/{item_id}", response_model=Item,response_model_exclude_unset=True)
+def read_item(item_id: Literal["foo","bar","baz"]):
+    return items[item_id]
+
+
+@app.post("/items", response_model=Item)
+def create_item(item:Item):
+    return item
+
+class UserBase(BaseModel):
+    username:str
+    email: EmailStr
+    full_name: str | None=None 
+
+class UserIn(UserBase):
+     password:str
+
+class UserOut(UserBase):
+    pass
+
+
+@app.post("/user", response_model=UserOut)
+def create_user(user:UserIn):
+    return user
+
+@app.get(
+        "/items/{item_id}/name",
+        response_model=Item,
+        response_model_include={"name""description"}
+        )
+def read_item_name(item_id: Literal['foo','bar','baz']):
+    return items[item_id]
+
+@app.get(
+        "/items/{item_id}/public",
+         response_model=Item,
+         response_model_exclude={"tax"}
+         )
+def read_item_public_data(item_id: Literal['foo','bar','baz']):
+    return items[item_id]
