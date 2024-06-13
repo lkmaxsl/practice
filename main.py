@@ -1,16 +1,17 @@
 from fastapi import FastAPI,Query,Path
 from typing import Optional
 from pydantic import BaseModel
+from uuid import UUID
+from datetime import datetime, time, timedelta
 
+app = FastAPI()
 
+'''
 class item(BaseModel):
     name:str
     description:Optional[str]=None #one way to do a optional 
     price:float
     tax:float | None = None #another way to do a optional
-
-app = FastAPI()
-
 
 @app.get("/")
 def get_inf():
@@ -55,7 +56,7 @@ def reat_item_validation(item_id:int = path (...,title="the 10 of the item to ge
         results.update({"q": q})
 
 
-'''Part 7 -  Multiple Parameters'''
+Part 7 -  Multiple Parameters
 
 class Item(BaseModel):
     name : str
@@ -67,7 +68,7 @@ class User(BaseModel):
     username : str
     full_bane : str | None = None
 
-'''
+
 @app.put("/item/{item_id}")
 def update_item(
     item_id: int=path(...,title="The id of the item to get", get=0,le=150),
@@ -87,7 +88,6 @@ def update_item(
         results.update({"imortance" : importance})
 
     return results
-    '''
 
 @app.put ("/items/{item_id}")
 def update_item(
@@ -119,3 +119,28 @@ def update_item(
 ): 
     results= {"item_id":item_id, "item":item}
     return results
+
+part 11 - Extra Data Types
+'''
+@app.put ("/items/{item_id}")
+def read_items(
+    item_id:UUID, 
+    start_date:datetimev| None=Body(None), 
+    end_date:datetime |None = Body(None),
+    repeat_at: time|None = Body(None),
+    process_after: timedelta | None = Body(None),
+    ):
+    
+    start_process = start_date + process_after
+    duration = end_date - start_process
+
+    return {
+        "item_id":item_id,
+        "start_date":start_date,
+        "end_date":end_date,
+        "repeat_at": repeat_at,
+        "process_after": process_after,
+        "start_process": start_process,
+        "duration": duration,
+
+        }
