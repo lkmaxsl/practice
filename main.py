@@ -165,7 +165,7 @@ def read_items(
 
 
 part 13 - Response Model    
-'''
+
 class Item(BaseModel):
     name:str
     description:str | None=None
@@ -218,3 +218,6 @@ def read_item_name(item_id: Literal['foo','bar','baz']):
          )
 def read_item_public_data(item_id: Literal['foo','bar','baz']):
     return items[item_id]
+
+Part 14 - Extra Models
+    '''
