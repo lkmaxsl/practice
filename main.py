@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Query,Path,Body,Cookie,Header,status,Form
+from fastapi import FastAPI,Query,Path,Body,Cookie,Header,status,Form,File,HTMLResponse
 from typing import Optional, Literal,Union
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
@@ -310,7 +310,7 @@ def read_items_redirect():
     return {"hello":"world"}
 
 part 16- Form Fields
-'''
+
 @app.post("login")
 def login(username:str = Form(...),password:str=form(...)):
     print("password",password)
@@ -324,3 +324,33 @@ class User(BaseModel):
 def login_json(username:str=Body(...), password: str=Body(...)):
     print("password",password)
     return {"username":username}
+    
+Part 17 - Request Files (upload a file)
+'''
+
+@app.post("/files")
+def create_file(files: bytes | None=File(None, description="A file read as bytes")):
+    if not files:
+        return {"message":"No file sent"}
+    return{"file": [len(file) for file in files]}
+
+@app.post("/uploadfile")
+def create_upload_file(files: list[uploadFile]=File(..., description="A file read as uploadFile")):
+    return{"filename": [file.filename for file in files]}
+
+@app.get("/")
+def main():
+    content = """
+<body>
+<form action = "/files" encrype = "multipart/form-data" method = "post">
+<input name = "files" type = "file" multiple>
+<input type = "submit">
+</form>
+<form action="/uploadfiles" enctype="multipart/form-data" method="post">
+<input name = "files" type = "file" multiple>
+<input type="submit">
+</form>
+</body>
+
+"""
+    return HTMLResponse(content=content)
