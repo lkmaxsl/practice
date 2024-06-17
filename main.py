@@ -326,7 +326,7 @@ def login_json(username:str=Body(...), password: str=Body(...)):
     return {"username":username}
     
 Part 17 - Request Files (upload a file)
-'''
+
 
 @app.post("/files")
 def create_file(files: bytes | None=File(None, description="A file read as bytes")):
@@ -354,3 +354,6 @@ def main():
 
 """
     return HTMLResponse(content=content)
+
+Part 18 - Request Forms and Files
+    '''
