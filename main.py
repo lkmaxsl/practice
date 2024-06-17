@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Query,Path,Body,Cookie,Header,status,Form,File,HTMLResponse
+from fastapi import FastAPI,Query,Path,Body,Cookie,Header,status,Form,File,UploadFile
 from typing import Optional, Literal,Union
 from pydantic import BaseModel, Field, HttpUrl, EmailStr
 from uuid import UUID
@@ -357,3 +357,16 @@ def main():
 
 Part 18 - Request Forms and Files
     '''
+@app.post("/files")
+def create_file(
+    file:bytes = File(...),
+    fileb: UploadFile = File(...),
+    token: str=Form(...),
+    hello: str=Body(...)
+):
+    return {
+        "file_size": len(file),
+        "token": token,
+       "fileb_content_type": fileb.content_type,
+       "hello":hello,
+    }
